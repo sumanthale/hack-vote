@@ -179,15 +179,15 @@ export const AdminPage: React.FC = () => {
       </div>
 
       {/* Predictions */}
-      <div className="bg-white rounded-2xl p-6 border border-gray-200">
+      <div className="bg-white rounded-2xl py-6 px-3 border border-gray-200">
         <h2 className="text-lg font-bold text-gray-900 mb-4">User Predictions</h2>
         
         <div className="space-y-3">
           {predictions.map((prediction, index) => (
-            <div key={index} className="p-3 bg-gray-50 rounded-xl">
+            <div key={index} className="py-3 bg-gray-50 rounded-xl">
               <div className="flex items-center justify-between mb-2">
                 <div className="font-semibold text-gray-900">{prediction.name}</div>
-                <div className="text-xs text-gray-600">{prediction.emp_id}</div>
+                <div className="text-sm font-semibold text-gray-900">{prediction.emp_id}</div>
               </div>
               <div className="flex space-x-2">
                 <div className="flex-1 text-center p-2 bg-white rounded-lg border border-gray-200">

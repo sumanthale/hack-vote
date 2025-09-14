@@ -3,12 +3,14 @@ import QRCode from 'qrcode';
 export const generateQRCode = async (url: string): Promise<string> => {
   try {
     const qrCodeDataURL = await QRCode.toDataURL(url, {
-      width: 256,
-      margin: 2,
+      width: 320,
+      margin: 4,
       color: {
-        dark: '#ffffff',
-        light: '#1a1a1a'
-      }
+        dark: '#0a2540', // Navy blue for QR code
+        light: '#fff' // White background
+      },
+      errorCorrectionLevel: 'H', // Highest error correction
+      scale: 8 // Sharper image
     });
     return qrCodeDataURL;
   } catch (error) {

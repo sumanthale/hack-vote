@@ -20,7 +20,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <Trophy className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">HackVote</h1>
+                <h1 className="text-lg font-bold text-gray-900">CodeQuest</h1>
               </div>
             </Link>
             
