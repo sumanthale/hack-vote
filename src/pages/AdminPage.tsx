@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getLeaderboard, getPredictions } from '../services/supabase';
 import { TeamStats, Prediction } from '../services/supabase';
 import { TEAMS } from '../utils/teams';
-import { Trophy, Users, Star, TrendingUp, Lock, ArrowLeft } from 'lucide-react';
+import {  Users, Star, TrendingUp, Lock, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const AdminPage: React.FC = () => {
@@ -33,7 +33,7 @@ export const AdminPage: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminId === 'admin123') {
+    if (adminId === 'codequest@syf') {
       setIsAuthenticated(true);
     } else {
       alert('Invalid admin credentials');

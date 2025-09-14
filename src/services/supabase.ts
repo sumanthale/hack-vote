@@ -121,6 +121,7 @@ export const hasDeviceVotedForTeam = async (teamId: number, deviceId: string): P
     .eq('device_id', deviceId)
     .eq('team_id', teamId)
     .single();
+    
 
   if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
     console.error('Error checking vote:', error);

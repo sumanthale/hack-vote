@@ -24,6 +24,7 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
       try {
         const deviceId = await getDeviceId();
         const votedInDB = await hasDeviceVotedForTeam(teamId, deviceId);
+        console.log("Vote status for device:", deviceId, "is", votedInDB);
         setHasVoted(votedInDB);
       } catch (err) {
         console.error('Error checking vote status:', err);
