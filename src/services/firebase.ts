@@ -4,10 +4,6 @@ import {
   setDoc, 
   getDoc, 
   getDocs, 
-  query, 
-  orderBy,
-  limit,
-  where,
   onSnapshot
 } from 'firebase/firestore';
 import { db } from '../firebase/config';

@@ -1,31 +1,34 @@
-export const getDeviceId = (): string => {
-  let deviceId = localStorage.getItem('hackathon-device-id');
-  
-  if (!deviceId) {
-    deviceId = `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    localStorage.setItem('hackathon-device-id', deviceId);
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+
+export const getDeviceId = async () => {
+  const fp = await FingerprintJS.load();
+  const result = await fp.get();
+
+  if (!localStorage.getItem("hackathon-device-id")) {
+    localStorage.setItem("hackathon-device-id", result.visitorId);
   }
-  
-  return deviceId;
+  console.log("Generated Device ID:", result.visitorId);
+
+  return result.visitorId; // Unique per device/browser
 };
 
 export const hasVotedForTeam = (teamId: string): boolean => {
-  const votes = JSON.parse(localStorage.getItem('hackathon-votes') || '[]');
+  const votes = JSON.parse(localStorage.getItem("hackathon-votes") || "[]");
   return votes.includes(teamId);
 };
 
 export const markTeamAsVoted = (teamId: string): void => {
-  const votes = JSON.parse(localStorage.getItem('hackathon-votes') || '[]');
+  const votes = JSON.parse(localStorage.getItem("hackathon-votes") || "[]");
   if (!votes.includes(teamId)) {
     votes.push(teamId);
-    localStorage.setItem('hackathon-votes', JSON.stringify(votes));
+    localStorage.setItem("hackathon-votes", JSON.stringify(votes));
   }
 };
 
 export const hasMadePrediction = (): boolean => {
-  return localStorage.getItem('hackathon-prediction') === 'true';
+  return localStorage.getItem("hackathon-prediction") === "true";
 };
 
 export const markPredictionMade = (): void => {
-  localStorage.setItem('hackathon-prediction', 'true');
+  localStorage.setItem("hackathon-prediction", "true");
 };

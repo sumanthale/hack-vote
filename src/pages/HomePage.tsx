@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TeamGrid } from '../components/TeamGrid';
 import { PredictionForm } from '../components/PredictionForm';
 import { hasMadePrediction } from '../utils/deviceId';
-import { Trophy, Target, CheckCircle, ArrowRight, Users, Star } from 'lucide-react';
+import { Trophy, Target, CheckCircle, ArrowRight} from 'lucide-react';
 
 export const HomePage: React.FC = () => {
   const [hasPredicted, setHasPredicted] = useState<boolean>(false);
@@ -36,8 +36,6 @@ export const HomePage: React.FC = () => {
           Predict winners and vote for your favorite teams
         </p>
       </div>
-
-      {/* Stats */}
 
 
       {/* Predictions Section */}

@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^4.6.2",
     "@supabase/supabase-js": "^2.57.4",
     "@types/qrcode": "^1.5.5",
     "firebase": "^12.2.1",
+    "framer-motion": "^12.23.12",
     "lucide-react": "^0.344.0",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
