@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { generateQRCode } from "../utils/qrcode";
 import { CheckCircle, QrCode, Share, Star } from "lucide-react";
-import { getDeviceId, hasVotedForTeam, markTeamAsVoted } from "../utils/deviceId";
-import { hasDeviceVoted, submitVote } from "../services/firebase";
+import { getDeviceId } from "../utils/deviceId";
+import { submitVote, hasDeviceVotedForTeam } from "../services/supabase";
 
 interface VotingInterfaceProps {
-  teamId: string;
+  teamId: number;
   teamName: string;
 }
 
@@ -16,18 +16,17 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [qrCode, setQrCode] = useState<string>("");
   const [showQR, setShowQR] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const checkVoteStatus = async () => {
       setLoading(true);
       try {
         const deviceId = await getDeviceId();
-        console.log("Device ID:", deviceId);
-
-        const votedFromDevice = hasVotedForTeam(teamId);
-        const votedInDB = await hasDeviceVoted(teamId, deviceId);
-
-        setHasVoted(votedFromDevice || votedInDB);
+        const votedInDB = await hasDeviceVotedForTeam(teamId, deviceId);
+        setHasVoted(votedInDB);
+      } catch (err) {
+        console.error('Error checking vote status:', err);
       } finally {
         setLoading(false);
       }
@@ -47,15 +46,15 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
     if (score === 0 || hasVoted) return;
 
     setIsSubmitting(true);
+    setError("");
+    
     try {
       const deviceId = await getDeviceId();
       await submitVote(teamId, score, deviceId);
-
-      markTeamAsVoted(teamId);
       setHasVoted(true);
     } catch (error) {
-      console.error("Error submitting vote:", error);
-      alert("Failed to submit vote. Please try again.");
+      const errorMessage = error instanceof Error ? error.message : "Failed to submit vote. Please try again.";
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -79,8 +78,7 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
     }
   };
 
-
-    if (loading) {
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
         <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -100,11 +98,10 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
             Thanks for Voting!
           </h3>
           <p className="text-gray-700 mb-2">
-            You rated <span className="font-semibold">{teamName}</span>
-            <span className="text-blue-600 font-bold"> {score}/10 </span>
+            You've already voted for <span className="font-semibold">{teamName}</span>
           </p>
           <p className="text-lg font-medium text-gray-600">
-            {getFeedback(score)}
+            Your vote has been recorded
           </p>
         </div>
 
@@ -148,7 +145,14 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
             Rate {teamName}
           </h3>
           <p className="text-gray-600">Tap a number to rate from 1 to 10</p>
-              </div>
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+            <p className="text-red-700 text-center font-medium">{error}</p>
+          </div>
+        )}
 
         {/* Score Selection */}
         <div className="grid grid-cols-5 gap-3 mb-6">
@@ -157,11 +161,11 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
               key={num}
               onClick={() => setScore(num)}
               className={`aspect-square rounded-xl font-bold text-lg transition-all active:scale-95
-    ${
-      score === num
-        ? "bg-blue-600 text-white shadow-md scale-110"
-        : "bg-gray-100 text-gray-700 hover:bg-blue-100"
-    }`}
+                ${
+                  score === num
+                    ? "bg-blue-600 text-white shadow-md scale-110"
+                    : "bg-gray-100 text-gray-700 hover:bg-blue-100"
+                }`}
             >
               {num}
             </button>
@@ -169,14 +173,14 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
         </div>
 
         {/* Star Rating Display */}
-            <div className="flex justify-center items-center space-x-1 mb-6">
-              {[1, 2, 3, 4, 5].map((star) => {
+        <div className="flex justify-center items-center space-x-1 mb-6">
+          {[1, 2, 3, 4, 5].map((star) => {
             const starValue = star * 2;
 
             if (score >= starValue) {
               // Full star
-                return (
-                    <Star
+              return (
+                <Star
                   key={star}
                   className={`w-6 h-6 text-yellow-400 fill-current animate-pop`}
                 />
@@ -192,25 +196,25 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
                       className={`w-6 h-6 text-yellow-400 fill-current animate-pop`}
                     />
                   </div>
-                  </div>
-                );
+                </div>
+              );
             } else {
               // Empty star
               return <Star key={star} className="w-6 h-6 text-gray-300" />;
             }
-              })}
+          })}
 
-              {score > 0 && (
-                <span className="ml-3 text-lg font-bold text-gray-900">{score}/10</span>
-              )}
-            </div>
+          {score > 0 && (
+            <span className="ml-3 text-lg font-bold text-gray-900">{score}/10</span>
+          )}
+        </div>
 
         {/* Submit Button */}
-            <button
-              onClick={handleVote}
+        <button
+          onClick={handleVote}
           disabled={score === 0 || isSubmitting}
           className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-colors"
-            >
+        >
           {isSubmitting ? (
             <span className="flex items-center justify-center space-x-2">
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -221,7 +225,7 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
           ) : (
             "Select a Score"
           )}
-            </button>
+        </button>
       </div>
 
       {/* Action Buttons */}
@@ -256,13 +260,4 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
       )}
     </div>
   );
-};
-
-const getFeedback = (score: number) => {
-  if (score <= 2) return "😞 Needs a lot of improvement";
-  if (score <= 4) return "😐 Could be better";
-  if (score <= 6) return "🙂 Decent effort!";
-  if (score <= 8) return "😃 Great work!";
-  if (score <= 10) return "🔥 Outstanding!";
-  return "";
 };

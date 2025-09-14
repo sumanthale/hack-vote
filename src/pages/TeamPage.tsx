@@ -6,7 +6,8 @@ import { ArrowLeft, Users } from 'lucide-react';
 
 export const TeamPage: React.FC = () => {
   const { teamId } = useParams<{ teamId: string }>();
-  const team = TEAMS.find(t => t.id === teamId);
+  const teamIdNum = teamId ? parseInt(teamId) : null;
+  const team = TEAMS.find(t => t.id === teamIdNum);
 
   if (!team) {
     return (

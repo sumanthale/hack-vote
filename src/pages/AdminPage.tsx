@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getTeamStats, getAllPredictions, subscribeToTeamStats } from '../services/firebase';
-import { TeamStats, Prediction } from '../types';
+import { getLeaderboard, getPredictions } from '../services/supabase';
+import { TeamStats, Prediction } from '../services/supabase';
 import { TEAMS } from '../utils/teams';
 import { Trophy, Users, Star, TrendingUp, Lock, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -18,20 +18,16 @@ export const AdminPage: React.FC = () => {
       
       // Get initial data
       Promise.all([
-        getTeamStats(),
-        getAllPredictions()
+        getLeaderboard(),
+        getPredictions()
       ]).then(([stats, preds]) => {
         setTeamStats(stats);
         setPredictions(preds);
         setLoading(false);
+      }).catch((error) => {
+        console.error('Error loading admin data:', error);
+        setLoading(false);
       });
-
-      // Subscribe to real-time updates
-      const unsubscribe = subscribeToTeamStats((stats) => {
-        setTeamStats(stats);
-      });
-
-      return unsubscribe;
     }
   }, [isAuthenticated]);
 
@@ -109,9 +105,11 @@ export const AdminPage: React.FC = () => {
     );
   }
 
-  const getTeamName = (teamId: string) => {
-    return TEAMS.find(t => t.id === teamId)?.name || teamId;
+  const getTeamName = (teamId: number) => {
+    return TEAMS.find(t => t.id === teamId)?.name || `Team ${teamId}`;
   };
+
+  const totalVotes = teamStats.reduce((sum, team) => sum + team.total_votes, 0);
 
   return (
     <div className="py-6 space-y-6">
@@ -133,7 +131,7 @@ export const AdminPage: React.FC = () => {
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-white rounded-2xl p-4 border border-gray-200 text-center">
           <Users className="w-6 h-6 text-blue-600 mx-auto mb-2" />
-          <div className="text-2xl font-bold text-gray-900">{teamStats.reduce((sum, team) => sum + team.voteCount, 0)}</div>
+          <div className="text-2xl font-bold text-gray-900">{totalVotes}</div>
           <div className="text-xs text-gray-600">Total Votes</div>
         </div>
         
@@ -156,7 +154,7 @@ export const AdminPage: React.FC = () => {
         
         <div className="space-y-3">
           {teamStats.map((team, index) => (
-            <div key={team.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+            <div key={team.team_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
               <div className="flex items-center space-x-3">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
                   index === 0 ? 'bg-yellow-100 text-yellow-700' :
@@ -167,12 +165,12 @@ export const AdminPage: React.FC = () => {
                   {index + 1}
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900">{team.name}</div>
-                  <div className="text-xs text-gray-600">{team.voteCount} votes</div>
+                  <div className="font-semibold text-gray-900">{getTeamName(team.team_id)}</div>
+                  <div className="text-xs text-gray-600">{team.total_votes} votes</div>
                 </div>
               </div>
               <div className="text-right">
-                <div className="font-bold text-gray-900">{team.averageScore.toFixed(1)}</div>
+                <div className="font-bold text-gray-900">{team.avg_score.toFixed(1)}</div>
                 <div className="text-xs text-gray-600">avg score</div>
               </div>
             </div>
@@ -189,15 +187,21 @@ export const AdminPage: React.FC = () => {
             <div key={index} className="p-3 bg-gray-50 rounded-xl">
               <div className="flex items-center justify-between mb-2">
                 <div className="font-semibold text-gray-900">{prediction.name}</div>
-                <div className="text-xs text-gray-600">{prediction.employeeId}</div>
+                <div className="text-xs text-gray-600">{prediction.emp_id}</div>
               </div>
               <div className="flex space-x-2">
-                {prediction.top3.map((teamId, idx) => (
-                  <div key={idx} className="flex-1 text-center p-2 bg-white rounded-lg border border-gray-200">
-                    <div className="text-xs text-blue-600 font-medium">#{idx + 1}</div>
-                    <div className="text-xs text-gray-900 font-medium truncate">{getTeamName(teamId)}</div>
-                  </div>
-                ))}
+                <div className="flex-1 text-center p-2 bg-white rounded-lg border border-gray-200">
+                  <div className="text-xs text-blue-600 font-medium">#1</div>
+                  <div className="text-xs text-gray-900 font-medium truncate">{getTeamName(prediction.top1)}</div>
+                </div>
+                <div className="flex-1 text-center p-2 bg-white rounded-lg border border-gray-200">
+                  <div className="text-xs text-blue-600 font-medium">#2</div>
+                  <div className="text-xs text-gray-900 font-medium truncate">{getTeamName(prediction.top2)}</div>
+                </div>
+                <div className="flex-1 text-center p-2 bg-white rounded-lg border border-gray-200">
+                  <div className="text-xs text-blue-600 font-medium">#3</div>
+                  <div className="text-xs text-gray-900 font-medium truncate">{getTeamName(prediction.top3)}</div>
+                </div>
               </div>
             </div>
           ))}

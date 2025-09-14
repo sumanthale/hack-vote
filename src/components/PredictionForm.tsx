@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { TEAMS } from '../utils/teams';
-import { submitPrediction } from '../services/firebase';
+import { submitPrediction } from '../services/supabase';
 import { markPredictionMade } from '../utils/deviceId';
 import { User, Trophy, GripVertical, Plus, X, CheckCircle, ArrowLeft } from 'lucide-react';
 
@@ -10,11 +10,12 @@ interface PredictionFormProps {
 }
 
 export const PredictionForm: React.FC<PredictionFormProps> = ({ onComplete }) => {
-  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [selectedTeams, setSelectedTeams] = useState<number[]>([]);
   const [showUserForm, setShowUserForm] = useState(false);
   const [name, setName] = useState('');
   const [employeeId, setEmployeeId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -26,13 +27,13 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({ onComplete }) =>
     setSelectedTeams(items);
   };
 
-  const addTeam = (teamId: string) => {
+  const addTeam = (teamId: number) => {
     if (selectedTeams.length < 3 && !selectedTeams.includes(teamId)) {
       setSelectedTeams([...selectedTeams, teamId]);
     }
   };
 
-  const removeTeam = (teamId: string) => {
+  const removeTeam = (teamId: number) => {
     setSelectedTeams(selectedTeams.filter(id => id !== teamId));
   };
 
@@ -47,19 +48,15 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({ onComplete }) =>
     if (!name || !employeeId || selectedTeams.length !== 3) return;
 
     setIsSubmitting(true);
+    setError('');
+    
     try {
-      await submitPrediction({
-        name,
-        employeeId,
-        top3: selectedTeams as [string, string, string],
-        timestamp: new Date()
-      });
-      
+      await submitPrediction(employeeId, name, selectedTeams as [number, number, number]);
       markPredictionMade();
       onComplete();
     } catch (error) {
-      console.error('Error submitting prediction:', error);
-      alert('Failed to submit prediction. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit prediction. Please try again.';
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -110,6 +107,13 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({ onComplete }) =>
             })}
           </div>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+            <p className="text-red-700 text-center font-medium">{error}</p>
+          </div>
+        )}
         
         {/* User Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -186,7 +190,7 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({ onComplete }) =>
                   {selectedTeams.map((teamId, index) => {
                     const team = TEAMS.find(t => t.id === teamId);
                     return (
-                      <Draggable key={teamId} draggableId={teamId} index={index}>
+                      <Draggable key={teamId.toString()} draggableId={teamId.toString()} index={index}>
                         {(provided, snapshot) => (
                           <div
                             ref={provided.innerRef}

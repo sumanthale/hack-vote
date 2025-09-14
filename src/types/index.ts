@@ -1,5 +1,5 @@
 export interface Team {
-  id: string;
+  id: number;
   name: string;
   description?: string;
 }
@@ -14,12 +14,12 @@ export interface Vote {
 export interface Prediction {
   name: string;
   employeeId: string;
-  top3: [string, string, string];
+  top3: [number, number, number];
   timestamp: Date;
 }
 
 export interface TeamStats {
-  id: string;
+  id: number;
   name: string;
   totalScore: number;
   voteCount: number;
