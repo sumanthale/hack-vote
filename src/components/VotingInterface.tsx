@@ -131,6 +131,13 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
               alt={`QR code for ${teamName}`}
               className="mx-auto rounded-xl mb-4"
             />
+            <a
+              href={qrCode}
+              download={`team-${teamId}-qr.png`}
+              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl mb-2 transition-colors"
+            >
+              Download QR Code
+            </a>
             <p className="text-sm text-gray-600">Scan to vote for {teamName}</p>
           </div>
         )}
@@ -256,6 +263,13 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
             alt={`QR code for ${teamName}`}
             className="mx-auto rounded-xl mb-4"
           />
+               <a
+              href={qrCode}
+              download={`team-${teamId}-qr.png`}
+              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl mb-2 transition-colors"
+            >
+              Download QR Code
+            </a>
           <p className="text-sm text-gray-600">Scan to vote for {teamName}</p>
         </div>
       )}
