@@ -111,11 +111,14 @@ CREATE POLICY "Anyone can update judge_votes"
 
 -- Insert sample data
 INSERT INTO judges (name, email) VALUES
-  ('Dr. Sarah Johnson', 'sarah.johnson@tech.com'),
-  ('Michael Chen', 'michael.chen@innovation.org'),
-  ('Prof. Emily Rodriguez', 'emily.rodriguez@university.edu'),
-  ('David Kim', 'david.kim@startup.io'),
-  ('Lisa Thompson', 'lisa.thompson@venture.capital')
+  ('Lyle Snider', 'SVP, Servicing Applications'),
+  ('Biswajit Roy', 'VP, Supplier Lead'),
+  ('Chintan Chawla', 'SVP, Global Operations Initiatives & Technology'),
+  ('Sherine John', 'SVP, India Credit Leader'),
+  ('Lolitha Rao', 'SVP, Technology - India'),
+  ('David Chau', 'SVP, Credit Technology Strategy'),
+  ('Parthiban Akkini', 'VP, Gen AI Architecture Leader'),
+  ('Anil Kumar Kondiparthi', 'VP, Chief Technology Office, India')
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO teams (id, name, description) VALUES

@@ -5,9 +5,10 @@ import { User, ChevronDown, CheckCircle } from 'lucide-react';
 
 interface JudgeSelectorProps {
   onJudgeSelected: (judge: StoredJudge) => void;
+  onSubmit?: (judge: StoredJudge) => void; // 👈 optional submit callback
 }
 
-export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected }) => {
+export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected, onSubmit }) => {
   const [judges, setJudges] = useState<Judge[]>([]);
   const [selectedJudge, setSelectedJudgeState] = useState<StoredJudge | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -48,7 +49,13 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected })
     setSelectedJudge(storedJudge);
     setSelectedJudgeState(storedJudge);
     setIsOpen(false);
-    onJudgeSelected(storedJudge);
+    // onJudgeSelected(storedJudge);
+  };
+
+  const handleSubmit = () => {
+    if (selectedJudge) {
+       onJudgeSelected(selectedJudge);
+    }
   };
 
   if (loading) {
@@ -71,8 +78,9 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected })
   }
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-      <div className="flex items-center space-x-3 mb-4">
+    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
+      {/* Header */}
+      <div className="flex items-center space-x-3">
         <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
           <User className="w-5 h-5 text-blue-600" />
         </div>
@@ -82,6 +90,7 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected })
         </div>
       </div>
 
+      {/* Dropdown */}
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -127,6 +136,19 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected })
           </div>
         )}
       </div>
+
+      {/* Submit Button */}
+      <button
+        onClick={handleSubmit}
+        disabled={!selectedJudge}
+        className={`w-full font-semibold py-3 px-6 rounded-xl transition-all ${
+          selectedJudge
+            ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md'
+            : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+        }`}
+      >
+        Continue
+      </button>
     </div>
   );
 };

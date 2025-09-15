@@ -53,7 +53,7 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [hasVoted, setHasVoted] = useState(!!existingVote);
-  const [expanded, setExpanded] = useState(!existingVote); // expand if new vote
+  const [expanded, setExpanded] = useState(!existingVote);
 
   useEffect(() => {
     if (existingVote) {
@@ -65,7 +65,7 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
         overall_impression: existingVote.overall_impression,
       });
       setHasVoted(true);
-      setExpanded(false); // collapse when loaded
+      setExpanded(false);
     }
   }, [existingVote]);
 
@@ -75,25 +75,18 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const allScoresSelected = Object.values(scores).every((score) => score > 0);
-    if (!allScoresSelected) {
-      setError("Please select scores for all criteria");
+    const allSelected = Object.values(scores).every((s) => s > 0);
+    if (!allSelected) {
+      setError("Please score all criteria.");
       return;
     }
 
     setIsSubmitting(true);
     setError("");
-
     try {
-      await submitTeamVote({
-        judge_id: judgeId,
-        team_id: team.id,
-        ...scores,
-      });
-
+      await submitTeamVote({ judge_id: judgeId, team_id: team.id, ...scores });
       setHasVoted(true);
-      setExpanded(false); // collapse after submit
+      setExpanded(false);
       onVoteSubmitted();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to submit vote");
@@ -102,54 +95,45 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
     }
   };
 
-  const totalScore = Object.values(scores).reduce(
-    (sum, score) => sum + score,
-    0
-  );
-  const isComplete = Object.values(scores).every((score) => score > 0);
+  const totalScore = Object.values(scores).reduce((a, b) => a + b, 0);
+  const isComplete = Object.values(scores).every((s) => s > 0);
 
   return (
     <div
-      className={`bg-white rounded-2xl p-6 border transition-all ${
-        hasVoted ? "border-green-200 bg-green-50/30" : "border-gray-200"
+      className={`rounded-xl border p-4 sm:p-6 transition-all ${
+        hasVoted ? "border-green-200 bg-green-50/40" : "border-gray-200 bg-white"
       }`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-xl text-white font-bold flex items-center justify-center">
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 bg-blue-600 rounded-lg text-white font-bold flex items-center justify-center">
             {team.id}
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-900">{team.name}</h3>
-            {team.description && (
-              <p className="text-sm text-gray-600">{team.description}</p>
-            )}
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">{team.name}</h3>
+         
           </div>
         </div>
-
         {hasVoted && (
-          <div className="flex items-center space-x-2 text-green-600 bg-green-100 px-3 py-1 rounded-lg">
-            <CheckCircle className="w-4 h-4" />
-            <span className="text-sm font-medium">Voted</span>
-          </div>
+          <span className="flex items-center gap-1 text-green-600 bg-green-100 px-2 py-1 rounded-md text-xs font-medium">
+            <CheckCircle className="w-4 h-4" /> Voted
+          </span>
         )}
       </div>
 
       {/* Compact Summary */}
       {hasVoted && !expanded && (
-        <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3 mb-4">
-          <span className="font-semibold text-gray-700">
-            Total Score:{" "}
-            <span className="text-blue-600 font-bold">{totalScore}/25</span>
+        <div className="flex justify-between items-center bg-gray-50 rounded-lg px-3 py-2 mb-3">
+          <span className="text-sm font-semibold text-gray-700">
+            Total: <span className="text-blue-600 font-bold">{totalScore}/25</span>
           </span>
           <button
             type="button"
             onClick={() => setExpanded(true)}
-            className="text-blue-600 font-medium flex items-center space-x-1 hover:underline"
+            className="text-blue-600 text-sm font-medium flex items-center gap-1 hover:underline"
           >
-            <span>View Details</span>
-            <ChevronDown className="w-4 h-4" />
+            View <ChevronDown className="w-4 h-4" />
           </button>
         </div>
       )}
@@ -166,24 +150,21 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
           <form onSubmit={handleSubmit} className="space-y-6">
             {CRITERIA.map((criterion) => (
               <div key={criterion.key} className="space-y-3">
-                <div>
-                  <h4 className="font-semibold text-gray-900">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+                  <h4 className="font-medium text-gray-900 text-sm sm:text-base">
                     {criterion.label}
                   </h4>
-                  <p className="text-sm text-gray-600">{criterion.description}</p>
+                  <p className="text-xs text-gray-500">{criterion.description}</p>
                 </div>
-
-                <div className="flex items-center space-x-2">
+                <div className="flex gap-1 sm:gap-2 w-full justify-around">
                   {[1, 2, 3, 4, 5].map((score) => (
                     <button
                       key={score}
                       type="button"
-                      onClick={() =>
-                        handleScoreChange(criterion.key, score)
-                      }
-                      className={`w-12 h-12 rounded-xl font-bold text-lg transition-all ${
+                      onClick={() => handleScoreChange(criterion.key, score)}
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg text-sm font-semibold transition ${
                         scores[criterion.key] >= score
-                          ? "bg-blue-600 text-white shadow-md"
+                          ? "bg-blue-600 text-white shadow"
                           : "bg-gray-100 text-gray-600 hover:bg-blue-100"
                       }`}
                     >
@@ -195,12 +176,10 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
             ))}
 
             {/* Total Score */}
-            <div className="bg-gray-50 rounded-xl p-4">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-gray-900">Total Score</span>
-                <span className="text-2xl font-bold text-blue-600">
-                  {totalScore}/25
-                </span>
+            <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium text-gray-900">Total Score</span>
+                <span className="text-lg sm:text-xl font-bold text-blue-600">{totalScore}/25</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                 <div
@@ -210,11 +189,11 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
               </div>
             </div>
 
-            {/* Submit */}
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={!isComplete || isSubmitting}
-              className={`w-full font-semibold py-4 px-6 rounded-xl transition-all flex items-center justify-center space-x-2 ${
+              className={`w-full py-3 rounded-lg flex items-center justify-center gap-2 font-medium transition ${
                 !isComplete || isSubmitting
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : hasVoted
@@ -224,13 +203,13 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Submitting...</span>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Submitting...
                 </>
               ) : (
                 <>
-                  <Save className="w-5 h-5" />
-                  <span>{hasVoted ? "Update Vote" : "Submit Vote"}</span>
+                  <Save className="w-4 h-4" />
+                  {hasVoted ? "Update Vote" : "Submit Vote"}
                 </>
               )}
             </button>
@@ -240,10 +219,9 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
               <button
                 type="button"
                 onClick={() => setExpanded(false)}
-                className="w-full mt-2 flex items-center justify-center text-gray-600 hover:text-gray-800 font-medium"
+                className="w-full text-xs text-gray-500 hover:text-gray-700 mt-1 flex justify-center items-center gap-1"
               >
-                <ChevronUp className="w-4 h-4 mr-1" />
-                Hide Details
+                <ChevronUp className="w-3 h-3" /> Hide
               </button>
             )}
           </form>

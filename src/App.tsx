@@ -13,7 +13,12 @@ function App() {
 
   useEffect(() => {
     const secret = localStorage.getItem("is_main");
+    const urlParams = new URLSearchParams(location.search);
+    const code = urlParams.get("code");
     if (secret === "cq-superjudge") {
+      setRole("judge");
+    } else if (code === "cq-superjudge") {
+      localStorage.setItem("is_main", "cq-superjudge");
       setRole("judge");
     } else {
       setRole("visitor");
@@ -29,7 +34,7 @@ function App() {
           {role === "judge" ? (
             <>
               <Route path="/admin" element={<AdminPage />} />
-               <Route
+              <Route
                 path="/"
                 element={
                   <JudgeRoute path="cq-superjudge">
@@ -60,6 +65,7 @@ function App() {
               <Route path="/team/:teamId" element={<TeamPage />} />
             </>
           )}
+          <Route path="*" element={<HomePage />} />
         </Routes>
       </Layout>
     </Router>
