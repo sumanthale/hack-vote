@@ -3,13 +3,17 @@ import { generateQRCode } from "../utils/qrcode";
 import { CheckCircle, QrCode, Share, Star } from "lucide-react";
 import { getDeviceId } from "../utils/deviceId";
 import { submitVote, hasDeviceVotedForTeam } from "../services/supabase";
+import QRSnippet from "./QRSnippet";
 
 interface VotingInterfaceProps {
   teamId: number;
   teamName: string;
 }
 
-export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamName }) => {
+export const VotingInterface: React.FC<VotingInterfaceProps> = ({
+  teamId,
+  teamName,
+}) => {
   const [score, setScore] = useState<number>(0);
   const [hasVoted, setHasVoted] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -27,7 +31,7 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
         console.log("Vote status for device:", deviceId, "is", votedInDB);
         setHasVoted(votedInDB);
       } catch (err) {
-        console.error('Error checking vote status:', err);
+        console.error("Error checking vote status:", err);
       } finally {
         setLoading(false);
       }
@@ -48,13 +52,16 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
 
     setIsSubmitting(true);
     setError("");
-    
+
     try {
       const deviceId = await getDeviceId();
       await submitVote(teamId, score, deviceId);
       setHasVoted(true);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to submit vote. Please try again.";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to submit vote. Please try again.";
       setError(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -83,7 +90,9 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
         <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-gray-600 text-lg font-medium">Checking vote status...</p>
+        <p className="text-gray-600 text-lg font-medium">
+          Checking vote status...
+        </p>
       </div>
     );
   }
@@ -99,7 +108,8 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
             Thanks for Voting!
           </h3>
           <p className="text-gray-700 mb-2">
-            You've already voted for <span className="font-semibold">{teamName}</span>
+            You've already voted for{" "}
+            <span className="font-semibold">{teamName}</span>
           </p>
           <p className="text-lg font-medium text-gray-600">
             Your vote has been recorded
@@ -125,21 +135,7 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
         </div>
 
         {showQR && qrCode && (
-          <div className="bg-white rounded-2xl p-6 border border-gray-200 text-center">
-            <img
-              src={qrCode}
-              alt={`QR code for ${teamName}`}
-              className="mx-auto rounded-xl mb-4"
-            />
-            <a
-              href={qrCode}
-              download={`team-${teamId}-qr.png`}
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl mb-2 transition-colors"
-            >
-              Download QR Code
-            </a>
-            <p className="text-sm text-gray-600">Scan to vote for {teamName}</p>
-          </div>
+          <QRSnippet teamId={teamId} teamName={teamName} qrCode={qrCode} />
         )}
       </div>
     );
@@ -213,7 +209,9 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
           })}
 
           {score > 0 && (
-            <span className="ml-3 text-lg font-bold text-gray-900">{score}/10</span>
+            <span className="ml-3 text-lg font-bold text-gray-900">
+              {score}/10
+            </span>
           )}
         </div>
 
@@ -257,21 +255,7 @@ export const VotingInterface: React.FC<VotingInterfaceProps> = ({ teamId, teamNa
 
       {/* QR Code Display */}
       {showQR && qrCode && (
-        <div className="bg-white rounded-2xl p-6 border border-gray-200 text-center">
-          <img
-            src={qrCode}
-            alt={`QR code for ${teamName}`}
-            className="mx-auto rounded-xl mb-4"
-          />
-               <a
-              href={qrCode}
-              download={`team-${teamId}-qr.png`}
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl mb-2 transition-colors"
-            >
-              Download QR Code
-            </a>
-          <p className="text-sm text-gray-600">Scan to vote for {teamName}</p>
-        </div>
+        <QRSnippet teamId={teamId} teamName={teamName} qrCode={qrCode} />
       )}
     </div>
   );
