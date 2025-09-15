@@ -16,11 +16,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Trophy className="w-5 h-5 text-white" />
-              </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">CodeQuest</h1>
+                <h1 className="text-lg font-bold text-gray-900">Code
+                  <span className='text-teal-600'>Quest</span>
+                </h1>
               </div>
             </Link>
             

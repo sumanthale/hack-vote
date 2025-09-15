@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { TeamGrid } from "../components/TeamGrid";
 import { PredictionForm } from "../components/PredictionForm";
 import { hasMadePrediction } from "../utils/deviceId";
-import { Trophy, Target, CheckCircle, ArrowRight } from "lucide-react";
+import { Target, CheckCircle, ArrowRight } from "lucide-react";
+import LogoImg from "../assets/logo.png";
+
 
 export const HomePage: React.FC = () => {
   const [hasPredicted, setHasPredicted] = useState<boolean>(false);
@@ -30,8 +32,8 @@ export const HomePage: React.FC = () => {
       {/* Hero Section */}
         <div className="text-center space-y-5">
           {/* Icon */}
-          <div className="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-            <Trophy className="w-10 h-10 text-white" />
+          <div className="w-20 h-20 flex items-center justify-center mx-auto">
+            <img src={LogoImg} alt="logo"  />
           </div>
 
           {/* Title */}
