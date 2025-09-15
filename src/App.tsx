@@ -25,6 +25,8 @@ function App() {
     }
   }, []);
 
+
+
   if (!role) return null; // optional: loader while checking role
 
   return (

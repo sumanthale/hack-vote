@@ -191,6 +191,22 @@ export const JudgePage: React.FC = () => {
               />
             );
           })}
+
+          <div className="flex flex-col items-center mt-6">
+            <p className="text-sm text-gray-700 mb-2">
+              To submit your scores, please go to the <span className="font-semibold">Summary</span> tab. There you can review your votes and submit your final scores.
+            </p>
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition"
+              onClick={() =>{
+                setCurrentView("summary");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              type="button"
+            >
+              Go to Summary
+            </button>
+          </div>
         </div>
       ) : (
         <JudgeSummary
