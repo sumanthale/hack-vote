@@ -41,6 +41,17 @@ export interface TeamResult {
   avg_pitch_presentation: number;
   judge_count: number;
 }
+export interface JudgeScoreDetail {
+  team_id: number;
+  team_name: string;
+  judge_id: string;
+  judge_name: string;
+  feasibility: number;
+  technical_approach: number;
+  innovation: number;
+  pitch_presentation: number;
+  total_score: number;
+}
 
 // Judge operations
 export const getJudges = async (): Promise<Judge[]> => {
@@ -181,4 +192,37 @@ export const getJudgeResults = async (): Promise<TeamResult[]> => {
   });
 
   return Object.values(teamResults).sort((a, b) => b.avg_total_score - a.avg_total_score);
+};
+export const getJudgeScores = async (): Promise<JudgeScoreDetail[]> => {
+  const { data, error } = await supabase
+    .from('judge_votes')
+    .select(`
+      team_id,
+      feasibility,
+      technical_approach,
+      innovation,
+      pitch_presentation,
+      total_score,
+      judges!inner(id, name),
+      teams!inner(name)
+    `)
+    .order('team_id');
+
+  if (error) {
+    throw new Error(`Failed to fetch judge scores: ${error.message}`);
+  }
+
+  return (
+    data?.map((vote: any) => ({
+      team_id: vote.team_id,
+      team_name: vote.teams.name,
+      judge_id: vote.judges.id,
+      judge_name: vote.judges.name,
+      feasibility: vote.feasibility,
+      technical_approach: vote.technical_approach,
+      innovation: vote.innovation,
+      pitch_presentation: vote.pitch_presentation,
+      total_score: vote.total_score
+    })) || []
+  );
 };
