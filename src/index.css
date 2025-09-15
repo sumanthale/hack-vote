@@ -18,4 +18,5 @@
 body {
   -ms-overflow-style: none;  
   scrollbar-width: none;  
+  font-family: 'Quicksand', sans-serif;
 }
