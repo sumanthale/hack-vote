@@ -1,12 +1,20 @@
-import React from 'react';
-import { Link} from 'react-router-dom';
-import { Trophy,  BarChart3,  } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { BarChart3, Gavel, Award } from "lucide-react";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const [isJudge, setIsJudge] = useState(false);
+
+  useEffect(() => {
+    const secret = localStorage.getItem("is_main");
+    if (secret === "cq-superjudge") {
+      setIsJudge(true);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
@@ -17,28 +25,51 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-3">
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Code
-                  <span className='text-teal-600'>Quest</span>
+                <h1 className="text-lg font-bold text-gray-900">
+                  Code
+                  <span className="text-teal-600">Quest</span>
                 </h1>
               </div>
             </Link>
-            
-            {/* Admin Link */}
-            <Link 
-              to="/admin" 
-              className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-            >
-              <BarChart3 className="w-5 h-5" />
-            </Link>
+
+            {/* Navigation Links */}
+            {isJudge && (
+              <>
+                {" "}
+                <div className="flex items-center space-x-2">
+                  <Link
+                    to="/judge"
+                    className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+                    title="Judge Voting"
+                  >
+                    <Gavel className="w-5 h-5" />
+                  </Link>
+
+                  <Link
+                    to="/results"
+                    className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+                    title="Results"
+                  >
+                    <Award className="w-5 h-5" />
+                  </Link>
+
+                  <Link
+                    to="/admin"
+                    className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+                    title="Admin"
+                  >
+                    <BarChart3 className="w-5 h-5" />
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </nav>
-      
+
       {/* Main Content */}
-      <main className="max-w-md mx-auto px-4 pb-20">
-        {children}
-      </main>
-      
+      <main className="max-w-md mx-auto px-4 pb-20">{children}</main>
+
       {/* Bottom Navigation */}
       {/* <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-area-pb">
         <div className="max-w-md mx-auto px-4">

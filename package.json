@@ -16,7 +16,6 @@
     "@supabase/supabase-js": "^2.57.4",
     "@types/qrcode": "^1.5.5",
     "firebase": "^12.2.1",
-    "framer-motion": "^12.23.12",
     "html-to-image": "^1.11.13",
     "lucide-react": "^0.344.0",
     "qrcode": "^1.5.4",
