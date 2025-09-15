@@ -150,11 +150,11 @@ export const ResultsPage: React.FC = () => {
                   <div className="text-xl font-bold text-gray-900">
                     {team.avg_total_score.toFixed(1)}
                   </div>
-                  <div className="text-xs text-gray-500">/ 25.0</div>
+                  <div className="text-xs text-gray-500">/ 40.0</div>
                   <div className="w-20 bg-gray-200 rounded-full h-2 mt-1">
                     <div
                       className="bg-blue-600 h-2 rounded-full"
-                      style={{ width: `${(team.avg_total_score / 25) * 100}%` }}
+                      style={{ width: `${(team.avg_total_score / 40) * 100}%` }}
                     />
                   </div>
                 </div>
@@ -175,7 +175,7 @@ export const ResultsPage: React.FC = () => {
                 <div>
                   <h3 className="font-semibold text-gray-900">{team.team_name}</h3>
                   <div className="flex items-center text-xs text-gray-500">
-                    <span>Total: {team.avg_total_score.toFixed(1)}/25</span>
+                    <span>Total: {team.avg_total_score.toFixed(1)}/40</span>
                     <span className="mx-1">•</span>
                     <span>{team.judge_count} judges</span>
                   </div>
@@ -188,7 +188,7 @@ export const ResultsPage: React.FC = () => {
                   { key: 'technical', label: 'Technical Approach', value: team.avg_technical_approach },
                   { key: 'innovation', label: 'Innovation', value: team.avg_innovation },
                   { key: 'pitch', label: 'Pitch/Presentation', value: team.avg_pitch_presentation },
-                  { key: 'overall', label: 'Overall Impression', value: team.avg_overall_impression }
+                  // { key: 'overall', label: 'Overall Impression', value: team.comments }
                 ].map((criterion) => (
                   <div key={criterion.key} className="flex items-center justify-between bg-gray-50 rounded-lg p-2">
                     <span className="text-sm text-gray-800">{criterion.label}</span>
@@ -196,11 +196,11 @@ export const ResultsPage: React.FC = () => {
                       <div className="w-16 bg-gray-200 rounded-full h-2">
                         <div
                           className="bg-blue-600 h-2 rounded-full"
-                          style={{ width: `${(criterion.value / 5) * 100}%` }}
+                          style={{ width: `${(criterion.value / 10) * 100}%` }}
                         />
                       </div>
                       <span className="text-sm font-semibold text-gray-900 w-10 text-right">
-                        {criterion.value.toFixed(1)}/5
+                        {criterion.value.toFixed(1)}/10
                       </span>
                     </div>
                   </div>

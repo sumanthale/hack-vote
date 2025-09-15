@@ -47,6 +47,11 @@ export const JudgePage: React.FC = () => {
     }
   };
 
+  const clearJudgeFromStorage = () => {
+    localStorage.removeItem("hackathon-selected-judge");
+    setSelectedJudge(null);
+  };
+
   const handleVoteSubmitted = () => {
     if (selectedJudge) {
       getJudgeVotes(selectedJudge.id).then(setVotes);
@@ -93,43 +98,50 @@ export const JudgePage: React.FC = () => {
   return (
     <div className="py-6 space-y-5">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-center gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-3 text-center">
         <div>
           <h1 className="text-xl font-bold text-gray-900">Judge Voting</h1>
           <p className="text-sm text-gray-600">
-            Welcome, <span className="font-medium">{selectedJudge.name}</span>
+        Welcome, <span className="font-medium">{selectedJudge.name}</span>
+        <button
+          className="ml-2 text-blue-600 underline text-xs"
+          onClick={clearJudgeFromStorage}
+          type="button"
+        >
+          Not you? Change Judge
+        </button>
           </p>
         </div>
 
         {!isSubmitted ? (
           <div className="flex rounded-lg overflow-hidden border border-gray-200">
-            <button
-              onClick={() => setCurrentView("voting")}
-              className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition ${
-                currentView === "voting"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              <Users className="w-4 h-4" />
-              Vote
-            </button>
-            <button
-              onClick={() => setCurrentView("summary")}
-              className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition ${
-                currentView === "summary"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              <Trophy className="w-4 h-4" />
-              Summary
-            </button>
+        <button
+          onClick={() => setCurrentView("voting")}
+          className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition ${
+            currentView === "voting"
+          ? "bg-blue-600 text-white"
+          : "bg-white text-gray-600 hover:bg-gray-50"
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          Vote
+        </button>
+        <button
+          onClick={() => setCurrentView("summary")}
+          className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition ${
+            currentView === "summary"
+          ? "bg-blue-600 text-white"
+          : "bg-white text-gray-600 hover:bg-gray-50"
+          }`}
+        >
+          <Trophy className="w-4 h-4" />
+          Summary
+        </button>
           </div>
         ) : (
           <div className="flex items-center gap-2 text-green-600 bg-green-100 px-3 py-1 rounded-md text-sm font-medium">
-            <Eye className="w-4 h-4" />
-            View Only
+        <Eye className="w-4 h-4" />
+        View Only
           </div>
         )}
       </div>

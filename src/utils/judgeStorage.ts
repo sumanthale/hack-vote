@@ -4,7 +4,7 @@ export const JUDGE_STORAGE_KEY = 'hackathon-selected-judge';
 export interface StoredJudge {
   id: string;
   name: string;
-  email: string;
+  title: string;
 }
 
 export const getSelectedJudge = (): StoredJudge | null => {

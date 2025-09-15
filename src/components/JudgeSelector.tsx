@@ -8,7 +8,7 @@ interface JudgeSelectorProps {
   onSubmit?: (judge: StoredJudge) => void; // 👈 optional submit callback
 }
 
-export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected, onSubmit }) => {
+export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected }) => {
   const [judges, setJudges] = useState<Judge[]>([]);
   const [selectedJudge, setSelectedJudgeState] = useState<StoredJudge | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -43,7 +43,7 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected, o
     const storedJudge: StoredJudge = {
       id: judge.id,
       name: judge.name,
-      email: judge.email
+      title: judge.title
     };
     
     setSelectedJudge(storedJudge);
@@ -85,7 +85,7 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected, o
           <User className="w-5 h-5 text-blue-600" />
         </div>
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Select Judge</h2>
+          <h2 className="text-lg font-bold text-gray-900 ">Select Judge</h2>
           <p className="text-sm text-gray-600">Choose your judge profile to continue</p>
         </div>
       </div>
@@ -102,7 +102,7 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected, o
                 <CheckCircle className="w-5 h-5 text-green-600" />
                 <div>
                   <div className="font-semibold text-gray-900">{selectedJudge.name}</div>
-                  <div className="text-sm text-gray-600">{selectedJudge.email}</div>
+                  <div className="text-sm text-gray-600">{selectedJudge.title}</div>
                 </div>
               </>
             ) : (
@@ -126,7 +126,7 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected, o
                 <User className="w-5 h-5 text-gray-400" />
                 <div>
                   <div className="font-semibold text-gray-900">{judge.name}</div>
-                  <div className="text-sm text-gray-600">{judge.email}</div>
+                  <div className="text-sm text-gray-600">{judge.title}</div>
                   {judge.submitted && (
                     <div className="text-xs text-green-600 font-medium">✓ Submitted</div>
                   )}

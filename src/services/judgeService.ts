@@ -4,7 +4,7 @@ import { supabase } from './supabase';
 export interface Judge {
   id: string;
   name: string;
-  email: string;
+  title: string;
   submitted: boolean;
   created_at?: string;
 }
@@ -24,7 +24,7 @@ export interface JudgeVote {
   technical_approach: number;
   innovation: number;
   pitch_presentation: number;
-  overall_impression: number;
+  comments?: string;   // optional comments field
   total_score?: number;
   created_at?: string;
   updated_at?: string;
@@ -39,7 +39,6 @@ export interface TeamResult {
   avg_technical_approach: number;
   avg_innovation: number;
   avg_pitch_presentation: number;
-  avg_overall_impression: number;
   judge_count: number;
 }
 
@@ -111,7 +110,9 @@ export const getJudgeVotes = async (judgeId: string): Promise<JudgeVote[]> => {
   return data || [];
 };
 
-export const submitTeamVote = async (vote: Omit<JudgeVote, 'id' | 'total_score' | 'created_at' | 'updated_at'>): Promise<void> => {
+export const submitTeamVote = async (
+  vote: Omit<JudgeVote, 'id' | 'total_score' | 'created_at' | 'updated_at'>
+): Promise<void> => {
   const { error } = await supabase
     .from('judge_votes')
     .upsert(vote, { onConflict: 'judge_id,team_id' });
@@ -131,7 +132,6 @@ export const getJudgeResults = async (): Promise<TeamResult[]> => {
       technical_approach,
       innovation,
       pitch_presentation,
-      overall_impression,
       total_score,
       teams!inner(name, description)
     `);
@@ -145,7 +145,7 @@ export const getJudgeResults = async (): Promise<TeamResult[]> => {
 
   data?.forEach((vote: any) => {
     const teamId = vote.team_id;
-    
+
     if (!teamResults[teamId]) {
       teamResults[teamId] = {
         team_id: teamId,
@@ -156,7 +156,6 @@ export const getJudgeResults = async (): Promise<TeamResult[]> => {
         avg_technical_approach: 0,
         avg_innovation: 0,
         avg_pitch_presentation: 0,
-        avg_overall_impression: 0,
         judge_count: 0
       };
     }
@@ -168,7 +167,6 @@ export const getJudgeResults = async (): Promise<TeamResult[]> => {
     result.avg_technical_approach += vote.technical_approach;
     result.avg_innovation += vote.innovation;
     result.avg_pitch_presentation += vote.pitch_presentation;
-    result.avg_overall_impression += vote.overall_impression;
   });
 
   // Calculate final averages
@@ -179,7 +177,6 @@ export const getJudgeResults = async (): Promise<TeamResult[]> => {
       result.avg_technical_approach = result.avg_technical_approach / result.judge_count;
       result.avg_innovation = result.avg_innovation / result.judge_count;
       result.avg_pitch_presentation = result.avg_pitch_presentation / result.judge_count;
-      result.avg_overall_impression = result.avg_overall_impression / result.judge_count;
     }
   });
 

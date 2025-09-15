@@ -30,11 +30,6 @@ const CRITERIA = [
     label: "Pitch / Presentation",
     description: "Quality of presentation and communication",
   },
-  {
-    key: "overall_impression",
-    label: "Overall Impression",
-    description: "General assessment of the project",
-  },
 ] as const;
 
 export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
@@ -48,8 +43,8 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
     technical_approach: existingVote?.technical_approach || 0,
     innovation: existingVote?.innovation || 0,
     pitch_presentation: existingVote?.pitch_presentation || 0,
-    overall_impression: existingVote?.overall_impression || 0,
   });
+  const [comments, setComments] = useState(existingVote?.comments || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [hasVoted, setHasVoted] = useState(!!existingVote);
@@ -62,8 +57,8 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
         technical_approach: existingVote.technical_approach,
         innovation: existingVote.innovation,
         pitch_presentation: existingVote.pitch_presentation,
-        overall_impression: existingVote.overall_impression,
       });
+      setComments(existingVote.comments || "");
       setHasVoted(true);
       setExpanded(false);
     }
@@ -84,7 +79,12 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
     setIsSubmitting(true);
     setError("");
     try {
-      await submitTeamVote({ judge_id: judgeId, team_id: team.id, ...scores });
+      await submitTeamVote({
+        judge_id: judgeId,
+        team_id: team.id,
+        ...scores,
+        comments: comments.trim() || undefined,
+      });
       setHasVoted(true);
       setExpanded(false);
       onVoteSubmitted();
@@ -101,7 +101,9 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
   return (
     <div
       className={`rounded-xl border p-4 sm:p-6 transition-all ${
-        hasVoted ? "border-green-200 bg-green-50/40" : "border-gray-200 bg-white"
+        hasVoted
+          ? "border-green-200 bg-green-50/40"
+          : "border-gray-200 bg-white"
       }`}
     >
       {/* Header */}
@@ -111,8 +113,9 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
             {team.id}
           </div>
           <div>
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900">{team.name}</h3>
-         
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+              {team.name}
+            </h3>
           </div>
         </div>
         {hasVoted && (
@@ -126,7 +129,8 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
       {hasVoted && !expanded && (
         <div className="flex justify-between items-center bg-gray-50 rounded-lg px-3 py-2 mb-3">
           <span className="text-sm font-semibold text-gray-700">
-            Total: <span className="text-blue-600 font-bold">{totalScore}/25</span>
+            Total:{" "}
+            <span className="text-blue-600 font-bold">{totalScore}/40</span>
           </span>
           <button
             type="button"
@@ -154,10 +158,12 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
                   <h4 className="font-medium text-gray-900 text-sm sm:text-base">
                     {criterion.label}
                   </h4>
-                  <p className="text-xs text-gray-500">{criterion.description}</p>
+                  <p className="text-xs text-gray-500">
+                    {criterion.description}
+                  </p>
                 </div>
                 <div className="flex gap-1 sm:gap-2 w-full justify-around">
-                  {[1, 2, 3, 4, 5].map((score) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
                     <button
                       key={score}
                       type="button"
@@ -175,16 +181,38 @@ export const TeamVotingForm: React.FC<TeamVotingFormProps> = ({
               </div>
             ))}
 
+            {/* Comments (Optional) */}
+            <div className="space-y-2">
+              <label
+                htmlFor={`comments-${team.id}`}
+                className="block text-sm font-medium text-gray-700"
+              >
+                Comments (optional)
+              </label>
+              <textarea
+                id={`comments-${team.id}`}
+                rows={3}
+                value={comments}
+                onChange={(e) => setComments(e.target.value)}
+                placeholder="Enter any feedback or remarks..."
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
             {/* Total Score */}
             <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-900">Total Score</span>
-                <span className="text-lg sm:text-xl font-bold text-blue-600">{totalScore}/25</span>
+                <span className="text-sm font-medium text-gray-900">
+                  Total Score
+                </span>
+                <span className="text-lg sm:text-xl font-bold text-blue-600">
+                  {totalScore}/40
+                </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                 <div
                   className="bg-blue-600 h-2 rounded-full transition-all"
-                  style={{ width: `${(totalScore / 25) * 100}%` }}
+                  style={{ width: `${(totalScore / 40) * 100}%` }}
                 />
               </div>
             </div>

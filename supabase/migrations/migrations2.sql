@@ -5,7 +5,7 @@
     - `judges`
       - `id` (uuid, primary key)
       - `name` (text, not null)
-      - `email` (text, unique, not null)
+      - `title` (text, unique, not null)
       - `submitted` (boolean, default false)
       - `created_at` (timestamp)
     
@@ -38,7 +38,7 @@
 CREATE TABLE IF NOT EXISTS judges (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   name text NOT NULL,
-  email text NOT NULL UNIQUE,
+  title text NOT NULL UNIQUE,
   submitted boolean DEFAULT false,
   created_at timestamptz DEFAULT now()
 );
@@ -56,12 +56,14 @@ CREATE TABLE IF NOT EXISTS judge_votes (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   judge_id uuid NOT NULL REFERENCES judges(id) ON DELETE CASCADE,
   team_id int NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
-  feasibility int NOT NULL CHECK (feasibility >= 1 AND feasibility <= 5),
-  technical_approach int NOT NULL CHECK (technical_approach >= 1 AND technical_approach <= 5),
-  innovation int NOT NULL CHECK (innovation >= 1 AND innovation <= 5),
-  pitch_presentation int NOT NULL CHECK (pitch_presentation >= 1 AND pitch_presentation <= 5),
-  overall_impression int NOT NULL CHECK (overall_impression >= 1 AND overall_impression <= 5),
-  total_score int GENERATED ALWAYS AS (feasibility + technical_approach + innovation + pitch_presentation + overall_impression) STORED,
+  feasibility int NOT NULL CHECK (feasibility >= 1 AND feasibility <= 10),
+  technical_approach int NOT NULL CHECK (technical_approach >= 1 AND technical_approach <= 10),
+  innovation int NOT NULL CHECK (innovation >= 1 AND innovation <= 10),
+  pitch_presentation int NOT NULL CHECK (pitch_presentation >= 1 AND pitch_presentation <= 10),
+  comments text, -- Optional, can be NULL
+  total_score int GENERATED ALWAYS AS (
+    feasibility + technical_approach + innovation + pitch_presentation
+  ) STORED,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now(),
   UNIQUE (judge_id, team_id)
@@ -110,7 +112,7 @@ CREATE POLICY "Anyone can update judge_votes"
   USING (true);
 
 -- Insert sample data
-INSERT INTO judges (name, email) VALUES
+INSERT INTO judges (name, title) VALUES
   ('Lyle Snider', 'SVP, Servicing Applications'),
   ('Biswajit Roy', 'VP, Supplier Lead'),
   ('Chintan Chawla', 'SVP, Global Operations Initiatives & Technology'),
@@ -119,7 +121,7 @@ INSERT INTO judges (name, email) VALUES
   ('David Chau', 'SVP, Credit Technology Strategy'),
   ('Parthiban Akkini', 'VP, Gen AI Architecture Leader'),
   ('Anil Kumar Kondiparthi', 'VP, Chief Technology Office, India')
-ON CONFLICT (email) DO NOTHING;
+ON CONFLICT (title) DO NOTHING;
 
 INSERT INTO teams (id, name, description) VALUES
   (1, 'AI Devs', 'AI-powered solutions for modern challenges'),
