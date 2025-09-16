@@ -4,30 +4,27 @@ import { v4 as uuid } from "uuid";
 export const getDeviceId = async () => {
   const fp = await FingerprintJS.load();
   const result = await fp.get();
-   const userAgent = navigator.userAgent;
-    const platform = navigator.platform;
-    const language = navigator.language;
 
-  if (!localStorage.getItem("hackathon-device-id-new")) {
-    localStorage.setItem("hackathon-device-id-new", 
-      `${result.visitorId}-${btoa(userAgent + platform + language)}-${uuid()}`
+  if (!localStorage.getItem("hackathon-device-id-one")) {
+    localStorage.setItem("hackathon-device-id-one", 
+      `${uuid()}`
     );
   }
-  console.log("Generated Device ID:", result.visitorId);
+  console.log("Generated Device ID:", `${uuid()}`);
 
   return result.visitorId; // Unique per device/browser
 };
 
 export const hasVotedForTeam = (teamId: string): boolean => {
-  const votes = JSON.parse(localStorage.getItem("hackathon-votes") || "[]");
+  const votes = JSON.parse(localStorage.getItem("hackathon-votes-new") || "[]");
   return votes.includes(teamId);
 };
 
 export const markTeamAsVoted = (teamId: string): void => {
-  const votes = JSON.parse(localStorage.getItem("hackathon-votes") || "[]");
+  const votes = JSON.parse(localStorage.getItem("hackathon-votes-new") || "[]");
   if (!votes.includes(teamId)) {
     votes.push(teamId);
-    localStorage.setItem("hackathon-votes", JSON.stringify(votes));
+    localStorage.setItem("hackathon-votes-new", JSON.stringify(votes));
   }
 };
 
