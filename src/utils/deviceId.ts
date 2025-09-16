@@ -3,8 +3,8 @@ import { v4 as uuid } from "uuid";
 export const getDeviceId = async () => {
   const result = uuid();
 
-  if (!localStorage.getItem("hackathon-device-id-one")) {
-    localStorage.setItem("hackathon-device-id-one", 
+  if (!localStorage.getItem("hackathon-device-id-two")) {
+    localStorage.setItem("hackathon-device-id-two", 
       `${uuid()}`
     );
   }
