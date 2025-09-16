@@ -2,6 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom animations */
+@keyframes animate-reverse {
+  to { transform: rotate(-360deg); }
+}
+
+.animate-reverse {
+  animation: animate-reverse 1s linear infinite;
+}
+
+@keyframes slide-in-from-bottom-4 {
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-top-2 {
+  from {
+    transform: translateY(-0.5rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.slide-in-from-bottom-4 {
+  animation: slide-in-from-bottom-4 0.5s ease-out;
+}
+
+.slide-in-from-top-2 {
+  animation: slide-in-from-top-2 0.3s ease-out;
+}
 
 @keyframes pop {
   0% { transform: scale(0.7); opacity: 0.5; }
@@ -10,6 +52,20 @@
 }
 .animate-pop {
   animation: pop 0.3s ease-out;
+}
+
+/* Glassmorphism effects */
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+/* Custom border widths */
+.border-3 {
+  border-width: 3px;
 }
 
 ::-webkit-scrollbar { 

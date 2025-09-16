@@ -7,6 +7,7 @@ import { JudgePage } from "./pages/JudgePage";
 import { ResultsPage } from "./pages/ResultsPage";
 import JudgeRoute from "./JudgeRoute";
 import { useEffect, useState } from "react";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   const [role, setRole] = useState<"visitor" | "judge" | null>(null);
@@ -25,13 +26,13 @@ function App() {
     }
   }, []);
 
-
-
   if (!role) return null; // optional: loader while checking role
 
   return (
     <Router>
       <Layout>
+        <ScrollToTop />
+
         <Routes>
           {role === "judge" ? (
             <>
