@@ -1,13 +1,20 @@
-import { v4 as uuidv4 } from "uuid";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 export const getDeviceId = async () => {
-  let deviceId = localStorage.getItem("hackathon-device-id-new");
-  if (!deviceId) {
-    deviceId = uuidv4();
-    localStorage.setItem("hackathon-device-id-new", deviceId!);
+  const fp = await FingerprintJS.load();
+  const result = await fp.get();
+   const userAgent = navigator.userAgent;
+    const platform = navigator.platform;
+    const language = navigator.language;
+
+  if (!localStorage.getItem("hackathon-device-id-new")) {
+    localStorage.setItem("hackathon-device-id-new", 
+      `${result.visitorId}-${btoa(userAgent + platform + language)}`
+    );
   }
-  console.log("Generated Device ID:", deviceId);
-  return deviceId;
+  console.log("Generated Device ID:", result.visitorId);
+
+  return result.visitorId; // Unique per device/browser
 };
 
 export const hasVotedForTeam = (teamId: string): boolean => {
