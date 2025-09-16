@@ -1,5 +1,6 @@
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
+import { v4 as uuid } from "uuid";
 export const getDeviceId = async () => {
   const fp = await FingerprintJS.load();
   const result = await fp.get();
@@ -9,7 +10,7 @@ export const getDeviceId = async () => {
 
   if (!localStorage.getItem("hackathon-device-id-new")) {
     localStorage.setItem("hackathon-device-id-new", 
-      `${result.visitorId}-${btoa(userAgent + platform + language)}`
+      `${result.visitorId}-${btoa(userAgent + platform + language)}-${uuid()}`
     );
   }
   console.log("Generated Device ID:", result.visitorId);
