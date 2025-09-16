@@ -32,7 +32,7 @@ export const HomePage: React.FC = () => {
       <div className="relative py-5 space-y-8">
         {/* Hero */}
         <div className="text-center space-y-5">
-          <div className="relative w-20 h-20 mx-auto">
+          <div className="relative w-28 h-w-28 mx-auto">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full blur-2xl opacity-20 scale-150"></div>
             <div className="relative flex items-center justify-center">
               <img src={LogoImg} alt="logo"  />
@@ -40,12 +40,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div>
-            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent tracking-tight">
-              Code
-              <span className="bg-gradient-to-r from-teal-600 to-teal-600 bg-clip-text text-transparent">
-                Quest
-              </span>
-            </h1>
+           
             <p className="mt-1 text-sm font-medium text-slate-600 flex items-center justify-center gap-1">
               <Sparkles className="w-4 h-4 text-yellow-500" />
               Hackathon Voting Platform
