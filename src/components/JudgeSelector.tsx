@@ -1,36 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { Judge, getJudges } from '../services/judgeService';
-import { getSelectedJudge, setSelectedJudge, StoredJudge } from '../utils/judgeStorage';
-import { User, ChevronDown, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Judge, getJudges } from "../services/judgeService";
+import {
+  getSelectedJudge,
+  setSelectedJudge,
+  StoredJudge,
+} from "../utils/judgeStorage";
+import { User, ChevronDown, CheckCircle } from "lucide-react";
 
 interface JudgeSelectorProps {
   onJudgeSelected: (judge: StoredJudge) => void;
   onSubmit?: (judge: StoredJudge) => void; // 👈 optional submit callback
 }
 
-export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected }) => {
+export const JudgeSelector: React.FC<JudgeSelectorProps> = ({
+  onJudgeSelected,
+}) => {
   const [judges, setJudges] = useState<Judge[]>([]);
-  const [selectedJudge, setSelectedJudgeState] = useState<StoredJudge | null>(null);
+  const [selectedJudge, setSelectedJudgeState] = useState<StoredJudge | null>(
+    null
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const loadJudges = async () => {
       try {
         const [judgesData, storedJudge] = await Promise.all([
           getJudges(),
-          Promise.resolve(getSelectedJudge())
+          Promise.resolve(getSelectedJudge()),
         ]);
-        
+
         setJudges(judgesData);
-        
+
         if (storedJudge) {
           setSelectedJudgeState(storedJudge);
           onJudgeSelected(storedJudge);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load judges');
+        setError(err instanceof Error ? err.message : "Failed to load judges");
       } finally {
         setLoading(false);
       }
@@ -43,9 +51,9 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected })
     const storedJudge: StoredJudge = {
       id: judge.id,
       name: judge.name,
-      title: judge.title
+      title: judge.title,
     };
-    
+
     setSelectedJudge(storedJudge);
     setSelectedJudgeState(storedJudge);
     setIsOpen(false);
@@ -54,7 +62,7 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected })
 
   const handleSubmit = () => {
     if (selectedJudge) {
-       onJudgeSelected(selectedJudge);
+      onJudgeSelected(selectedJudge);
     }
   };
 
@@ -86,8 +94,11 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected })
         </div>
         <div>
           <h2 className="text-lg font-bold text-gray-900 ">Select Judge</h2>
-          <p className="text-sm text-gray-600">Choose your judge profile to continue</p>
+          <p className="text-sm text-gray-600">
+            Choose your judge profile to continue
+          </p>
         </div>
+
       </div>
 
       {/* Dropdown */}
@@ -101,8 +112,12 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected })
               <>
                 <CheckCircle className="w-5 h-5 text-green-600" />
                 <div>
-                  <div className="font-semibold text-gray-900">{selectedJudge.name}</div>
-                  <div className="text-sm text-gray-600">{selectedJudge.title}</div>
+                  <div className="font-semibold text-gray-900">
+                    {selectedJudge.name}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {selectedJudge.title}
+                  </div>
                 </div>
               </>
             ) : (
@@ -112,7 +127,11 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected })
               </>
             )}
           </div>
-          <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown
+            className={`w-5 h-5 text-gray-400 transition-transform ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
         </button>
 
         {isOpen && (
@@ -125,10 +144,14 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected })
               >
                 <User className="w-5 h-5 text-gray-400" />
                 <div>
-                  <div className="font-semibold text-gray-900">{judge.name}</div>
+                  <div className="font-semibold text-gray-900">
+                    {judge.name}
+                  </div>
                   <div className="text-sm text-gray-600">{judge.title}</div>
                   {judge.submitted && (
-                    <div className="text-xs text-green-600 font-medium">✓ Submitted</div>
+                    <div className="text-xs text-green-600 font-medium">
+                      ✓ Submitted
+                    </div>
                   )}
                 </div>
               </button>
@@ -143,8 +166,8 @@ export const JudgeSelector: React.FC<JudgeSelectorProps> = ({ onJudgeSelected })
         disabled={!selectedJudge}
         className={`w-full font-semibold py-3 px-6 rounded-xl transition-all ${
           selectedJudge
-            ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md'
-            : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+            ? "bg-blue-600 text-white hover:bg-blue-700 shadow-md"
+            : "bg-gray-200 text-gray-500 cursor-not-allowed"
         }`}
       >
         Continue

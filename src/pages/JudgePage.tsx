@@ -77,10 +77,26 @@ export const JudgePage: React.FC = () => {
   if (!selectedJudge) {
     return (
       <div className="py-6 space-y-4">
-        <h1 className="text-xl font-bold text-gray-900">Judge Voting</h1>
-        <p className="text-sm text-gray-600">
-          Select your judge profile to begin
-        </p>
+        <div className="flex justify-between  items-center gap-3">
+        <div>
+            <h1 className="text-xl font-bold text-gray-900">Judge Voting</h1>
+          <p className="text-sm text-gray-600">
+            Select your judge profile to begin
+          </p>
+        </div>
+            <button
+            onClick={() => {
+              localStorage.removeItem("is_main");
+              localStorage.removeItem("hackathon-selected-judge");
+              window.location.href = "/";
+            }}
+            className="px-4 py-2 text-sm text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition"
+            type="button"
+            >
+            Not a Judge?
+            </button>
+        </div>
+
         <JudgeSelector onJudgeSelected={setSelectedJudge} />
       </div>
     );
